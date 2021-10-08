@@ -1,13 +1,16 @@
 # app.py
 from flask import Flask, request, jsonify, send_file
+from flask import request
 from PIL import Image, ImageDraw
 from io import BytesIO
+import urllib.parse
+import json
 
 app = Flask(__name__)
 
 
-def sample_image():
-    size = 5
+def sample_image(size):
+    #size = 5
     cell_size = 50
     divider_size = 5
 
@@ -43,7 +46,14 @@ def serve_pil_image(pil_img):
 
 @app.route('/image', methods=['GET'])
 def get_image():
-    return serve_pil_image(sample_image())
+
+    url_encoded = request.args.get('json')
+    json_encoded = urllib.parse.unquote_plus(url_encoded)
+    data = json.loads(json_encoded)
+
+    print(data)
+
+    return serve_pil_image(sample_image(data['size']))
 
 
 
